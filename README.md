@@ -1,15 +1,22 @@
-# Computer-Networks-A2
+# Project README
 
+## Running the Code
 
-to run the code;
-1) open two terminals, on first terminal run the commands:
-   gcc -pthread server.c -o server
-   taskset -c 1 ./server
+To run the code, follow these steps:
 
-   on second terminal run the commands:
-   gcc client.c -o client
-   taskset -c 2 ./client
+1. **Open Two Terminals:**
 
-2) for now the get top two cpu processes code is left, will finish that later. Basic code is done ig.
+   - In the first terminal, run the following commands:
+     ```bash
+     gcc -pthread server.c -o server
+     taskset -c 1 ./server
+     ```
 
-   
+   - In the second terminal, run the following commands:
+     ```bash
+     gcc client.c -o client
+     taskset -c 2 ./client
+     ```
+
+2. **Note:**
+   - The code for retrieving the top two CPU processes is still pending. I will finish that later. For now, the basic code is complete.
