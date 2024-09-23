@@ -27,7 +27,7 @@ void* make_request(void* client_id){
 
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;  // ip address belongs to IPV4 family
-    server_address.sin_port = htons(1515);
+    server_address.sin_port = htons(8080);
 
     // ip address of the server the client wants to connect to
     const char *server_ip_address = "192.168.174.154"; // local host
