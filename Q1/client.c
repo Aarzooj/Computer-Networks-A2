@@ -30,7 +30,7 @@ void* make_request(void* client_id){
     server_address.sin_port = htons(1515);
 
     // ip address of the server the client wants to connect to
-    const char *server_ip_address = "127.0.0.1"; // local host
+    const char *server_ip_address = "192.168.174.154"; // local host
     if (inet_pton(AF_INET, server_ip_address, &server_address.sin_addr) <= 0) {
         printf("Invalid IP address for the server. Connection can't be established\n");
         close(client_fd);
