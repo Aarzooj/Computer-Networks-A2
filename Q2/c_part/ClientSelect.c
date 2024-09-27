@@ -49,17 +49,23 @@ void* make_request(void* client_id){
     send(client_fd, client_request, strlen(client_request), 0);
 
     // read the response from the server and print it out
-    char server_response[1024];
+    char server_response[2048];
     read(client_fd, server_response, sizeof(server_response));
-    printf("Client no: %d, Server Response: %s\n", id + 1, server_response);
+    printf("Client no: %d, Server Response: \n", id + 1);
+    printf("%s \n", server_response);
 
     // close the socket
     close(client_fd);
     return NULL;
 
 }
-int main() {
-    int num_of_client_requests = 3;
+int main(int argc, char* argv[]) {
+    if (argc < 2){
+        perror("More number of arguments expected. Add the number of client requests");
+        return 0;
+    }
+
+    int num_of_client_requests = atoi(argv[1]);
     pthread_t client_reqs[num_of_client_requests];
 
     for (int i = 0; i < num_of_client_requests; i++){

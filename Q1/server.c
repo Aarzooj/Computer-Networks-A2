@@ -139,7 +139,7 @@ int main(){
     }
 
     //server is set to listen for the client requests
-    if (listen(server_fd, 5) < 0){
+    if (listen(server_fd, 1000) < 0){
         perror("Listening of the server socket is failed");
         exit(0);
     }
