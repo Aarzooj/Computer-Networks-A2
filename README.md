@@ -20,3 +20,8 @@ To run the code, follow these steps:
 
 2. **Note:**
    - The code for retrieving the top two CPU processes is still pending. I will finish that later. For now, the basic code is complete.
+
+3. **References**
+
+    - https://github.com/AkankshaSingal8/socket_programming/tree/main
+    - https://stackoverflow.com/questions/60237123/is-there-any-method-to-run-perf-under-wsl

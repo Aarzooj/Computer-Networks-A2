@@ -7,9 +7,11 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <dirent.h>
+/*Reference : https://github.com/AkankshaSingal8/socket_programming/tree/main */
 
 #define MAX_PROCESSES  1000
 
+/*  Structure to hold the details of a process */
 typedef struct{
     int pid;
     char name[256];
@@ -24,28 +26,30 @@ int get_time_for_process(int pid, char *name, unsigned long long *user_time, uns
 
     FILE *stat_file = fopen(stat_file_path, "r");
     if (stat_file == NULL) {
-        // printf("Stat file for process with pid %d is erased or finished executing\n", pid);
+        printf("ERROR: Stat file for process with pid %d is erased or finished executing\n", pid);
         return 0;
     }
 
-    // Read the required fields from /proc/[pid]/stat
+    /* Reading the required fields from /proc/[pid]/stat file */
     fscanf(stat_file, "%*d (%[^)]) %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %llu %llu",
        name, user_time, kernel_time);
 
     if (*user_time == 0 || *kernel_time == 0){
-        // printf("Warning: user_time or kernel_time for process %d is zero\n", pid);
+        //printf("Warning: user_time or kernel_time for process %d is zero\n", pid);
         return 0;
     }
 
-    return 1;  // Success
+    return 1; 
 }
 
+/*  Function to sort the processes in  descending order of their total time */
 int compare_processes_by_total_time(const void* a, const void* b){
     Process* A = (Process*) a;
     Process* B = (Process*) b;
     return (A->total_time - B->total_time); // descending order sort
 }
 
+/*  Function to get the top two CPU processes */
 char* top_two_CPU_processes() {
     DIR *dir = opendir("/proc");
     if (dir == NULL) {
@@ -57,18 +61,18 @@ char* top_two_CPU_processes() {
     int count = 0;
     struct dirent *row;
 
-    // Iterate over each directory in /proc to find process directories (numeric PIDs)
+    /* Iterating over each directory in /proc to find process directories (numeric PIDs) */
     while ((row = readdir(dir)) != NULL && count < MAX_PROCESSES) {
         if (atoi(row->d_name) > 0) {  // Valid PID directories
             int pid = atoi(row->d_name);
             char process_name[256];
             unsigned long long user_time, kernel_time, total_time;
 
-            // Get the user and kernel time for the process
+            // Getting the user and kernel time for the process
             if (get_time_for_process(pid, process_name, &user_time, &kernel_time)) {
                 total_time = user_time + kernel_time;
 
-                // Store the process details
+                // Storing the process details
                 Process p;
                 p.pid = pid;
                 strcpy(p.name, process_name);
@@ -87,6 +91,7 @@ char* top_two_CPU_processes() {
     static char result[2048];
     result[0] = '\0';
 
+    /* Printing the details of the top 2 CPU Processes */
     snprintf(result + strlen(result), sizeof(result) - strlen(result),
             "Process 1: PID = %d, Process Name = %s, User Time = %lld ticks, Kernel Time = %lld ticks, Total Time = %lld ticks\n",
             process_list[0].pid, process_list[0].name, process_list[0].user_time, process_list[0].kernel_time, process_list[0].total_time);
@@ -103,20 +108,20 @@ void serve_client(int* client_socket){
     int new_socket = *client_socket;  // got client socket in dereferenced state
     free(client_socket);
 
-    char buffer[1024]; // reads the client requests
-    int bytes_read = read(new_socket, buffer, sizeof(buffer) - 1); // leave space for null terminator
-    if (bytes_read < 0) {
+    char buffer[1024]; // reading the client requests
+    int read_response1 = read(new_socket, buffer, sizeof(buffer) - 1); // leave space for null terminator
+    if (read_response1 < 0) {
         perror("Failed to read client request");
         close(new_socket);
         return;
     }
 
-    buffer[bytes_read] = '\0'; // null-terminate the received data
+    buffer[read_response1] = '\0'; // null-terminate the received data
     printf("Client request: %s\n", buffer);
 
     char *cur_cpu_proc = top_two_CPU_processes();
 
-     // Send the response to the client
+    // Sending the response to the client
     if (send(new_socket, cur_cpu_proc, strlen(cur_cpu_proc), 0) < 0) {
         perror("Failed to send data to client");
     }
@@ -129,40 +134,39 @@ int main(){
 
     int server_fd; // file descriptor of server socket
 
-    // create a TCP connection
+    /* creating a TCP connection */
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1){
         perror("TCP connection not established");
         exit(0);
     }
 
-    //bind the server socket to a ip address and a port number
+    /* bind the server socket to a ip address and a port number */
     struct sockaddr_in server_address;
-    server_address.sin_family = AF_INET;  // ip address belongs to IPV4 family
+    /* ip address belongs to IPV4 family */
+    server_address.sin_family = AF_INET; 
     server_address.sin_port = htons(1516);
     server_address.sin_addr.s_addr = INADDR_ANY;
 
-    // bind the socket
+    /* binding the socket*/
     if (bind(server_fd, (struct sockaddr*) &server_address, sizeof(server_address)) < 0){
         perror("Binding of the server socket is unsuccessful");
         exit(0);
     }
 
-    //server is set to listen for the client requests
+    /* server is set to listen for the client requests */
     if (listen(server_fd, 1000) < 0){
         perror("Listening of the server socket is failed");
         exit(0);
     }
 
-    printf("Reached till here \n");
+    printf("Server activated \n");
 
-    // server listens to allc lient, untill the code is dirupted
+    /* server listens to all client, untill the code is dirupted */
     int* client_socket;
     struct sockaddr_in client_address;
     socklen_t addrlen = sizeof(client_address);
     pthread_t thread_id;
-
-
 
     while (1){
         client_socket = malloc(sizeof(int));
@@ -172,10 +176,10 @@ int main(){
             continue;
         }
 
-        // prints the client address the request is accepted from
+        /* prints the client address the request is accepted from */
         printf("Accepted connection from %s:%d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
 
-        // Serving the client sequentially in the main thread
+        /* Serving the client sequentially in the main thread */
         serve_client(client_socket);
 
     }

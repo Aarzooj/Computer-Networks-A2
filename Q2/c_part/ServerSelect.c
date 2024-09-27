@@ -8,12 +8,14 @@
 #include <sys/select.h>
 #include <errno.h>
 #include <dirent.h>
+/*Reference : https://github.com/AkankshaSingal8/socket_programming/tree/main */
 
 #define PORT 1517
 #define MAX_CLIENTS 100
 #define BUFFER_SIZE 1024
 #define MAX_PROCESSES  1000
 
+/*  Structure to hold the details of a process */
 typedef struct{
     int pid;
     char name[256];
@@ -32,7 +34,7 @@ int get_time_for_process(int pid, char *name, unsigned long long *user_time, uns
         return 0;
     }
 
-    // Read the required fields from /proc/[pid]/stat
+    /* Reading the required fields from /proc/[pid]/stat file */
     fscanf(stat_file, "%*d (%[^)]) %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %llu %llu",
        name, user_time, kernel_time);
 
@@ -41,15 +43,17 @@ int get_time_for_process(int pid, char *name, unsigned long long *user_time, uns
         return 0;
     }
 
-    return 1;  // Success
+    return 1;  
 }
 
+/*  Function to sort the processes in  descending order of their total time */
 int compare_processes_by_total_time(const void* a, const void* b){
     Process* A = (Process*) a;
     Process* B = (Process*) b;
     return (A->total_time - B->total_time); // descending order sort
 }
 
+/*  Function to get the top two CPU processes */
 char* top_two_CPU_processes() {
     DIR *dir = opendir("/proc");
     if (dir == NULL) {
@@ -61,7 +65,7 @@ char* top_two_CPU_processes() {
     int count = 0;
     struct dirent *row;
 
-    // Iterate over each directory in /proc to find process directories (numeric PIDs)
+    /* Iterating over each directory in /proc to find process directories (numeric PIDs) */
     while ((row = readdir(dir)) != NULL && count < MAX_PROCESSES) {
         if (atoi(row->d_name) > 0) {  // Valid PID directories
             int pid = atoi(row->d_name);
@@ -91,6 +95,7 @@ char* top_two_CPU_processes() {
     static char result[2048];
     result[0] = '\0';
 
+    /* Printing the details of the top 2 CPU Processes */
     snprintf(result + strlen(result), sizeof(result) - strlen(result),
             "Process 1: PID = %d, Process Name = %s, User Time = %lld ticks, Kernel Time = %lld ticks, Total Time = %lld ticks\n",
             process_list[0].pid, process_list[0].name, process_list[0].user_time, process_list[0].kernel_time, process_list[0].total_time);
@@ -109,25 +114,25 @@ int main() {
     fd_set readfds;
     char buffer[BUFFER_SIZE];
 
-    // Initialize client sockets array
+    /* Initializing client sockets array */
     for (int i = 0; i < MAX_CLIENTS; i++) {
         client_sockets[i] = 0;
     }
 
-    // Create server socket
+    /* Creating server socket */
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("Socket failed");
         exit(EXIT_FAILURE);
     }
 
-    // Set socket options
+    /* Setting socket options */ 
     int opt = 1;
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
         perror("Setsockopt failed");
         exit(EXIT_FAILURE);
     }
 
-    // Bind the socket to an address and port
+    /* bind the server socket to a ip address and a port number */
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
     server_address.sin_port = htons(PORT);
@@ -137,7 +142,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // Listen for incoming connections
+    /* Listening for incoming connections */ 
     if (listen(server_fd, 3) < 0) {
         perror("Listen failed");
         exit(EXIT_FAILURE);
