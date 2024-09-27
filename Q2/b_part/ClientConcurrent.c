@@ -16,15 +16,7 @@ void* make_request(void* client_id){
         printf("Unsuccessful client socket creation\n");
         return NULL;
     }
-
-    // struct sockaddr_in client_address;
-    // socklen_t address_length = sizeof(client_address);
-    // if (getsockname(client_fd, (struct sockaddr *)&client_address, &address_length) == -1) {
-    //     printf("Failed to get client socket name\n");
-    // } else {
-    //     printf("Client socket created on port: %d\n", ntohs(client_address.sin_port));
-    // }
-
+    
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;  // ip address belongs to IPV4 family
     server_address.sin_port = htons(1516);
