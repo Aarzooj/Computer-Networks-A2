@@ -34,6 +34,8 @@ int get_time_for_process(int pid, char *name, unsigned long long *user_time, uns
     fscanf(stat_file, "%*d (%[^)]) %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %llu %llu",
        name, user_time, kernel_time);
 
+    fclose(stat_file); // Ensure the file is closed
+
     if (*user_time == 0 || *kernel_time == 0){
         // printf("Warning: user_time or kernel_time for process %d is zero\n", pid);
         return 0;
@@ -86,20 +88,27 @@ char* top_two_CPU_processes() {
     }
     closedir(dir);
 
-    qsort(process_list, count, sizeof(Process), compare_processes_by_total_time);
+
+    // Only sort if we have processes
+    if (count > 0) {
+        qsort(process_list, count, sizeof(Process), compare_processes_by_total_time);
+    }
 
     static char result[2048];
     result[0] = '\0';
 
-    /* Printing the details of the top 2 CPU Processes */
-    snprintf(result + strlen(result), sizeof(result) - strlen(result),
-            "Process 1: PID = %d, Process Name = %s, User Time = %lld ticks, Kernel Time = %lld ticks, Total Time = %lld ticks\n",
-            process_list[0].pid, process_list[0].name, process_list[0].user_time, process_list[0].kernel_time, process_list[0].total_time);
+    // Safeguard against less than 2 processes
+    if (count > 0) {
+        snprintf(result + strlen(result), sizeof(result) - strlen(result),
+                "Process 1: PID = %d, Process Name = %s, User Time = %llu ticks, Kernel Time = %llu ticks, Total Time = %llu ticks\n",
+                process_list[0].pid, process_list[0].name, process_list[0].user_time, process_list[0].kernel_time, process_list[0].total_time);
+    }
 
-    snprintf(result + strlen(result), sizeof(result) - strlen(result),
-            "Process 2: PID = %d, Process Name = %s, User Time = %lld ticks, Kernel Time = %lld ticks, Total Time = %lld ticks\n",
-         process_list[1].pid, process_list[1].name, process_list[1].user_time, process_list[1].kernel_time, process_list[1].total_time);
-
+    if (count > 1) {
+        snprintf(result + strlen(result), sizeof(result) - strlen(result),
+                "Process 2: PID = %d, Process Name = %s, User Time = %llu ticks, Kernel Time = %llu ticks, Total Time = %llu ticks\n",
+                process_list[1].pid, process_list[1].name, process_list[1].user_time, process_list[1].kernel_time, process_list[1].total_time);
+    }
 
     return result;
 }
