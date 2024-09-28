@@ -26,13 +26,15 @@ int get_time_for_process(int pid, char *name, unsigned long long *user_time, uns
 
     FILE *stat_file = fopen(stat_file_path, "r");
     if (stat_file == NULL) {
-        printf("ERROR: Stat file for process with pid %d is erased or finished executing\n", pid);
+        // printf("ERROR: Stat file for process with pid %d is erased or finished executing\n", pid);
         return 0;
     }
 
     /* Reading the required fields from /proc/[pid]/stat file */
     fscanf(stat_file, "%*d (%[^)]) %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %llu %llu",
        name, user_time, kernel_time);
+
+    fclose(stat_file); // Ensure the file is closed
 
     if (*user_time == 0 || *kernel_time == 0){
         //printf("Warning: user_time or kernel_time for process %d is zero\n", pid);
@@ -166,7 +168,6 @@ int main(){
     int* client_socket;
     struct sockaddr_in client_address;
     socklen_t addrlen = sizeof(client_address);
-    pthread_t thread_id;
 
     while (1){
         client_socket = malloc(sizeof(int));

@@ -29,14 +29,14 @@ void* make_request(void* client_id){
     if (inet_pton(AF_INET, server_ip_address, &server_address.sin_addr) <= 0) {
         printf("Invalid IP address for the server. Connection can't be established\n");
         close(client_fd);
-        return -1;
+        return NULL;
     }
 
     /* Connecting to the server */
     if (connect(client_fd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
         printf("Connection not established\n");
         close(client_fd);
-        return -1;
+        return NULL;
     }
 
     /* Sending the request to the server to get top 2 CPU processes */

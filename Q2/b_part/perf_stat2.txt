@@ -1,0 +1,23 @@
+# started on Sun Sep 29 01:01:39 2024
+
+
+ Performance counter stats for './server2':
+
+             14.75 msec task-clock                #    0.003 CPUs utilized          
+                51      context-switches          #    3.458 K/sec                  
+                 1      cpu-migrations            #   67.813 /sec                   
+               455      page-faults               #   30.855 K/sec                  
+          27940543      cycles                    #    1.895 GHz                    
+           2993063      stalled-cycles-frontend   #   10.71% frontend cycles idle   
+           8952029      stalled-cycles-backend    #   32.04% backend cycles idle    
+          10728262      instructions              #    0.38  insn per cycle         
+                                                  #    0.83  stalled cycles per insn
+           2480654      branches                  #  168.221 M/sec                  
+            275097      branch-misses             #   11.09% of all branches        
+
+       5.542136464 seconds time elapsed
+
+       0.014493000 seconds user
+       0.000000000 seconds sys
+
+

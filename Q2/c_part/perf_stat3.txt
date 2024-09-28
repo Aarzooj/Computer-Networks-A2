@@ -1,0 +1,23 @@
+# started on Sun Sep 29 01:15:31 2024
+
+
+ Performance counter stats for './server3':
+
+              5.68 msec task-clock                #    0.001 CPUs utilized          
+                10      context-switches          #    1.760 K/sec                  
+                 0      cpu-migrations            #    0.000 /sec                   
+               132      page-faults               #   23.238 K/sec                  
+          16058396      cycles                    #    2.827 GHz                    
+           1518935      stalled-cycles-frontend   #    9.46% frontend cycles idle   
+           4500578      stalled-cycles-backend    #   28.03% backend cycles idle    
+           8028048      instructions              #    0.50  insn per cycle         
+                                                  #    0.56  stalled cycles per insn
+           1842888      branches                  #  324.435 M/sec                  
+            175914      branch-misses             #    9.55% of all branches        
+
+       5.037469148 seconds time elapsed
+
+       0.006418000 seconds user
+       0.000000000 seconds sys
+
+
