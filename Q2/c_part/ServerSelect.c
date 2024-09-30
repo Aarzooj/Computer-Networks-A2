@@ -134,6 +134,14 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
+        /* Set socket option to reuse address */
+    int true = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &true, sizeof(int)) < 0) {
+        perror("setsockopt(SO_REUSEADDR) failed");
+        close(server_fd);
+        exit(0);
+    }
+
     /* Setting socket options */ 
     int opt = 1;
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {

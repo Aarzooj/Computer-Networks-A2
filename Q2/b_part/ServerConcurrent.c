@@ -88,7 +88,6 @@ char* top_two_CPU_processes() {
     }
     closedir(dir);
 
-
     // Only sort if we have processes
     if (count > 0) {
         qsort(process_list, count, sizeof(Process), compare_processes_by_total_time);
@@ -138,6 +137,14 @@ int main(){
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1){
         perror("TCP connection not established");
+        exit(0);
+    }
+
+        /* Set socket option to reuse address */
+    int true = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &true, sizeof(int)) < 0) {
+        perror("setsockopt(SO_REUSEADDR) failed");
+        close(server_fd);
         exit(0);
     }
 

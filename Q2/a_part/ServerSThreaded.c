@@ -149,11 +149,19 @@ int main(){
         exit(0);
     }
 
+        /* Set socket option to reuse address */
+    int true = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &true, sizeof(int)) < 0) {
+        perror("setsockopt(SO_REUSEADDR) failed");
+        close(server_fd);
+        exit(0);
+    }
+
     /* bind the server socket to a ip address and a port number */
     struct sockaddr_in server_address;
     /* ip address belongs to IPV4 family */
     server_address.sin_family = AF_INET; 
-    server_address.sin_port = htons(1516);
+    server_address.sin_port = htons(1515);
     server_address.sin_addr.s_addr = INADDR_ANY;
 
     /* binding the socket*/
