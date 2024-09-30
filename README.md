@@ -22,3 +22,5 @@ To run the code, follow these steps:
 
     - https://github.com/AkankshaSingal8/socket_programming/tree/main
     - https://stackoverflow.com/questions/60237123/is-there-any-method-to-run-perf-under-wsl
+    - https://stackoverflow.com/questions/10619952/how-to-completely-destroy-a-socket-connection-in-c
+    
